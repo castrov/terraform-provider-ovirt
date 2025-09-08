@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	ovirtclient "github.com/ovirt/go-ovirt-client/v2"
+	ovirtclient "github.com/ovirt/go-ovirt-client/v3"
 )
 
 func TestNICResource(t *testing.T) {
@@ -87,6 +87,7 @@ resource "ovirt_nic" "test" {
 	vm_id           = ovirt_vm.test.id
 	vnic_profile_id = "%s"
 	name            = "eth0"
+	mac				= "11:22:33:AA:BB:CC"
 }
 `, config1, vnicProfileID)
 
@@ -122,6 +123,11 @@ resource "ovirt_nic" "test" {
 						"ovirt_nic.test",
 						"name",
 						regexp.MustCompile("^eth0$"),
+					),
+					resource.TestMatchResourceAttr(
+						"ovirt_nic.test",
+						"mac",
+						regexp.MustCompile("^11:22:33:AA:BB:CC"),
 					),
 				),
 			},
